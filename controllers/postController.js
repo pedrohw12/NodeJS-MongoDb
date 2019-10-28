@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const slug = require('slug');
 const Post = mongoose.model('Post');
 
+exports.view = async (req, res) => {
+  const post = await Post.findOne({ slug: req.params.slug });
+  res.render('view', { post });
+};
+
 exports.add = (req, res) => {
   res.render('postAdd');
 };
@@ -28,6 +33,7 @@ exports.edit = async (req, res) => {
 
 exports.editAction = async (req, res) => {
   req.body.slug = slug(req.body.title, {lower: true});
+  req.body.tags = req.body.tags.split(',').map(t=>t.trim());
 
   try {
   const post = await Post.findOneAndUpdate({ 
