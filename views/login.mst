@@ -1,3 +1,5 @@
+{{> header}}
+
 <h1>Faça o seu login </h1>
 
 <form>
