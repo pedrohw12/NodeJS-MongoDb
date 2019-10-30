@@ -27,14 +27,22 @@ app.use(session({
 }));
 app.use(flash());
 
-app.use((req, res, next)=>{
-  res.locals.h = helpers;
-  res.locals.flashes = req.flash();
-  next();
-});
-
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use((req, res, next)=>{
+  res.locals.h = {...helpers};
+  res.locals.flashes = req.flash();
+  res.locals.user = req.user;
+
+  if (req.isAuthenticated()) {
+    res.locals.h.menu = res.locals.h.menu.filter(i=>i.logged);
+  } else {
+    res.locals.h.menu = res.locals.h.menu.filter(i=>i.guest);
+  }
+
+  next();
+});
 
 const User = require('./models/User');
 passport.use(new LocalStrategy(User.authenticate()));
